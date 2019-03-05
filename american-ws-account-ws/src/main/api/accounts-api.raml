@@ -1,0 +1,56 @@
+#%RAML 1.0
+baseUri: https://anypoint.mulesoft.com/mocking/api/v1/links/d33403f4-8eea-45f7-bcb2-f319f6fe9a40/ # 
+version: v1
+title: Accounts API
+types: 
+  Account: !include dataModels/account.raml
+  
+
+/accounts:
+  get:
+    description: Get all the accounts. May filter based on type, name and coutry
+    queryParameters:
+      type:
+        description: Identifies the account's type. Only those acounts will be return whose type matches the supplied param
+        required: true
+        enum:
+          - personal
+          - business
+      name:
+        description: Identifies the account owner's name. Only those acounts will be return whose name matches the supplied param
+        required: false
+
+      country:
+        description: Identifies the account owner's country. Only those acounts will be return whose name matches the supplied param
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            type: Account[]
+            example: !include examples/account-array-example.raml
+              
+      400:
+        body:
+          application/json:
+            example:
+              reason: "Bad request" 
+                   
+  post:
+    description: Create new accounts
+    body:
+      application/json:
+        type: Account[]
+        example: !include examples/account-no-id-creationDate-example.raml
+          
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              message: "Accounts created (but not actuall)"  
+      400:
+        body:
+          application/json:
+            example:
+              reason: "Bad Request"   
