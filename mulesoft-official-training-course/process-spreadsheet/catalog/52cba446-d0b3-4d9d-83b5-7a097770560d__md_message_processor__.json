@@ -1,0 +1,13 @@
+{
+    "inputMessageMetadata": {},
+    "outputMessageMetadata": {
+        "flowVariables": {
+            "fvAccountsResponse": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "accountsFromAccountsApi"
+            }
+        }
+    },
+    "id": "52cba446-d0b3-4d9d-83b5-7a097770560d",
+    "version": "5.2.0.0"
+}

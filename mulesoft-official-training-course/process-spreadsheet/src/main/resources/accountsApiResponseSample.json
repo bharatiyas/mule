@@ -1,0 +1,26 @@
+[
+    {
+        "salesID": "4401Rajesh Patil591412017-08-23T00:52:42+0.00",
+        "id": "4401",
+        "firstName": "Rajesh",
+        "lastName": "Patil",
+        "address": "89 Nibm Road, Pune, Maharashtra",
+        "postal": "59141",
+        "country": "India",
+        "creationDate": "2017-08-23T00:52:42+0.00",
+        "accountType": "personal",
+        "miles": 36470
+    },
+    {
+        "salesID": "4402Siva Mat243282001-05-22T13:22:07+0.00",
+        "id": "4402",
+        "firstName": "Siva",
+        "lastName": "Mat",
+        "address": "45 Test Street, Auckland, Auckland",
+        "postal": "24328",
+        "country": "New Zealand",
+        "creationDate": "2001-05-22T13:22:07+0.00",
+        "accountType": "personal",
+        "miles": 105557
+    }
+]

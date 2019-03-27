@@ -1,0 +1,11 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "wewewew"
+        }
+    },
+    "outputMessageMetadata": {},
+    "id": "6d2c3988-4ed9-4bd9-8479-9af82f90c3bc",
+    "version": "5.2.0.0"
+}
