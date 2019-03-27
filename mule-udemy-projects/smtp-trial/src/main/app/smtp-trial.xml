@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:smtp="http://www.mulesoft.org/schema/mule/smtp" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/smtp http://www.mulesoft.org/schema/mule/smtp/current/mule-smtp.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <smtp:gmail-connector name="Gmail" contentType="text/html" fromAddress="sanjayfromgomia@gmail.com" replyToAddresses="sanjayfromgomia@gmail.com" subject="Test mail from Mulesoft project" validateConnections="true" doc:name="Gmail"/>
+    <flow name="smtp-trialFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/email" doc:name="HTTP"/>
+        <set-payload value="Hi Sanjay,&lt;br&gt;
+
+This is a test mail from Mulesoft project. &lt;br&gt;
+
+Thanks,&lt;br&gt;
+Sanjay" mimeType="text/html" doc:name="Set Payload"/>
+        <smtp:outbound-endpoint host="smtp.gmail.com" port="587" user="sanjayfromgomia@gmail.com" password="Virudh200^" connector-ref="Gmail" to="sanjay.bharatiya@flightcenter.com.au" from="sanjayfromgomia@gmail.com" subject="Test mail from Mulesoft project" replyTo="sanjayfromgomia@gmail.com" responseTimeout="10000" doc:name="SMTP"/>
+    </flow>
+</mule>

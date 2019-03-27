@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="9091" doc:name="HTTP Listener Configuration"/>
+    <ee:object-store-caching-strategy name="Caching_Strategy" keyGenerationExpression="#[message.inboundProperties.'http.uri.params'.name]" doc:name="Caching Strategy">
+        <in-memory-store/>
+    </ee:object-store-caching-strategy>
+    <flow name="mule-cache-trialFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/cache/{name}" allowedMethods="get" doc:name="HTTP"/>
+        <logger message="Start" level="INFO" doc:name="Logger"/>
+        <ee:cache cachingStrategy-ref="Caching_Strategy" doc:name="Cache">
+            <logger message="Start Caching........" level="INFO" doc:name="Logger"/>
+            <set-variable variableName="nameVar" value="#[message.inboundProperties.'http.uri.params'.name]" doc:name="Variable"/>
+            <set-payload value="#[flowVars.nameVar]" mimeType="text/plain" doc:name="Set Payload"/>
+            <logger message="End Cache.............. for #[flowVars.nameVar]" level="INFO" doc:name="Logger"/>
+        </ee:cache>
+        <logger message="End" level="INFO" doc:name="Logger"/>
+    </flow>
+</mule>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="9091" doc:name="HTTP Listener Configuration" basePath="/exception"/>
+    <validation:config name="Validation_Configuration" doc:name="Validation Configuration"/>
+    <http:listener-config name="HTTP_Listener_Configuration1" host="0.0.0.0" port="9091" basePath="/exception" doc:name="HTTP Listener Configuration"/>
+    <flow name="mule-exception-handling-trialFlow1">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/choice" doc:name="HTTP"/>
+        <choice-exception-strategy doc:name="Choice Exception Strategy">
+            <rollback-exception-strategy maxRedeliveryAttempts="3" doc:name="Rollback Exception Strategy"/>
+            <exception-strategy ref="global-exception-handlerChoice_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+        </choice-exception-strategy>
+    </flow>
+    <flow name="mule-exception-handling-trialFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/catch/{id}" doc:name="HTTP"/>
+        <validation:is-number config-ref="Validation_Configuration" message="Path parameter ID should be a number" value="#[message.inboundProperties.'http.uri.params'.id]" doc:name="Validation" numberType="INTEGER"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	"value": 1/0
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <catch-exception-strategy doc:name="Catch Exception Strategy">
+            <set-payload value="{
+	&quot;status&quot; : &quot;Exception occurred while processing your request&quot;
+}" doc:name="Set Payload"/>
+        </catch-exception-strategy>
+    </flow>
+    <apikit:mapping-exception-strategy name="mule-exception-handling-trialMapping_Exception_Strategy">
+        <apikit:mapping statusCode="403"/>
+        <apikit:mapping statusCode="404"/>
+        <apikit:mapping statusCode="500">
+            <apikit:exception value=""/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+</mule>

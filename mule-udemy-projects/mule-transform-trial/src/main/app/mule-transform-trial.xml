@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="9091" doc:name="HTTP Listener Configuration"/>
+    <flow name="mule-transform-trialFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/transform/one/{dailyRate}" doc:name="HTTP" allowedMethods="post"/>
+        <set-variable variableName="city" value="#[&quot;Gomia&quot;]" doc:name="Variable"/>
+        <set-session-variable variableName="country" value="#[&quot;India&quot;]" doc:name="Session Variable"/>
+        <set-variable variableName="street" value="#[&quot;Norman  &quot;]" doc:name="Variable"/>
+        <set-variable variableName="age" value="#[26.6]" doc:name="Variable"/>
+        <set-variable variableName="dailyRate" value="#[message.inboundProperties.'http.uri.params'.dailyRate]" doc:name="Variable"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+%var numOfDays = 22
+%function multiply (num1, num2)
+num1*num2
+---
+{
+	"firstName": "Sanjay",
+	"lastName" : "Bharatiya",
+	"fullName" : "Sanjay" ++ " " ++ "Bharatiya",
+	"city"     : flowVars.city,
+	"country"  : sessionVars.country,
+	"streetSubStr": flowVars.street[0..3],
+	"streetReverse": flowVars.street[-1..0],
+	"streetReplace": (flowVars.street replace "n" with "B"),
+	"size": sizeOf flowVars.street,
+	"trimmedStreet" : trim flowVars.street,
+	"currentTime": now,
+	"ageCeil": ceil flowVars.age,
+	"ageFloor": floor flowVars.age,
+	"countryCode": "AU" when sessionVars.country == "Australia" otherwise "Other",
+	"totalSalary": multiply(flowVars.dailyRate, numOfDays)
+}]]></dw:set-payload>
+        </dw:transform-message>
+    </flow>
+</mule>

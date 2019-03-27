@@ -1,0 +1,102 @@
+#%RAML 1.0
+title: Account API
+baseUri: http://localhost:9091
+
+/account:
+  get:
+    description: Fetch the details of an <<resourcePathName>>|<<!singularize>>
+    queryParameters:
+      accountId:
+        type: string
+        required: true
+        minLength: 5
+        maxLength: 5
+    responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  "accountId": "123456",
+                  "firstName": "First",
+                  "lastName": "Last",
+                  "age": 30,
+                  "gender": "Female"
+                }
+        400:
+          body:
+            application/json:
+              example:
+                {
+                  "errorMessage": "Account ID not found"
+                }    
+  post:
+    description: Create a new <<resourcePathName|!singularize>> 
+    body:
+      application/json:
+        properties:
+          firstName:
+            type: string
+            required: true    
+          lastName:
+            type: string
+            required: true
+          age:
+            type: integer
+            required: true
+          gender:
+            type: string
+            required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                "status": "success",
+                "accountId": "123456",
+                "firstName": "First",
+                "lastName": "Last",
+                "age": 30,
+                "gender": "Female"
+              }                                                                              
+  put:
+    description: Update an existing <<resourcePathName|!singularize>>
+    body:
+      application/json:
+        properties:
+          accountId:
+            type: string
+            required: true
+          firstName:
+            type: string
+            required: true    
+          lastName:
+            type: string
+            required: true
+          age:
+            type: integer
+            required: true
+          gender:
+            type: string
+            required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                "status": "updated",
+                "accountId": "123456",
+                "firstName": "First",
+                "lastName": "Last",
+                "age": 30,
+                "gender": "Female"
+              }
+      404:
+        body:
+          application/json:
+            example:
+              {
+                "errorMessage": "Account Id not found"
+              }                                                                                                    

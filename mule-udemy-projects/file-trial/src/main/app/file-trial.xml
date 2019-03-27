@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+    <file:connector name="File" autoDelete="true" streaming="true" validateConnections="true" doc:name="File"/>
+    <flow name="file-trialFlow">
+        <file:inbound-endpoint path="C:\dev\logs\mulesoft\file-trial\in" moveToDirectory="C:\dev\logs\mulesoft\file-trial\retention" connector-ref="File" responseTimeout="10000" doc:name="File"/>
+        <file:file-to-string-transformer doc:name="File to String"/>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <foreach collection="#[payload.split('\n')]" doc:name="For Each">
+            <foreach collection="#[payload.split(' ')]" doc:name="For Each">
+                <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+            </foreach>
+        </foreach>
+    </flow>
+</mule>

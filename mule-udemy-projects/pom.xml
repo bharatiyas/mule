@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.skb.learn.mule</groupId>
+  <artifactId>mule-udemy-projects</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>mule-udemy-projects</name>
+  
+  <modules>
+	<module>api-project</module>
+	<module>domain-project</module>
+	<module>file-trial</module>
+	<module>first-project</module>
+	<module>mule-batch-trial</module>
+	<module>mule-cache-trial</module>
+	<module>mule-consume-apis</module>
+	<module>mule-db-trial</module>
+	<module>mule-exception-handling-trial</module>
+	<module>mule-filter-trial</module>
+	<module>mule-invoker-trial</module>
+	<module>mule-mq-trial</module>
+	<module>mule-munit-trial</module>
+	<module>mule-property-place-holder-trial</module>
+	<module>mule-raml-trial</module>
+	<module>mule-transform-trial</module>
+	<module>second-project</module>
+	<module>sftp-trial</module>
+	<module>smtp-trial</module>
+  </modules>
+</project>

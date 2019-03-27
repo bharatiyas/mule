@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="9091" doc:name="HTTP Listener Configuration"/>
+    <db:mysql-config name="MySQL_Configuration" host="localhost" port="3306" user="test" password="test" database="learn" doc:name="MySQL Configuration"/>
+    <file:connector name="File" outputPattern="db-records.txt" autoDelete="true" streaming="true" validateConnections="true" doc:name="File"/>
+    <flow name="mule-batch-trialFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/batch" doc:name="HTTP"/>
+        <db:select config-ref="MySQL_Configuration" doc:name="Database">
+            <db:parameterized-query><![CDATA[select * from person]]></db:parameterized-query>
+        </db:select>
+        <logger message="Read DB Records #[payload]" level="INFO" doc:name="Logger"/>
+        <batch:execute name="mule-batch-trialBatch" doc:name="Batch Execute"/>
+        <set-payload value="{
+	&quot;status&quot;: &quot;Records processed successfully&quot;
+}" doc:name="Set Payload"/>
+    </flow>
+    <batch:job name="mule-batch-trialBatch">
+        <batch:input>
+            <logger message="Starting Batch processing::" level="INFO" doc:name="Logger"/>
+        </batch:input>
+        <batch:process-records>
+            <batch:step name="Batch_Step">
+                <logger message="Logging In Batch" level="INFO" doc:name="Logger"/>
+            </batch:step>
+            <batch:step name="Batch_Step1">
+                <batch:set-record-variable variableName="name" value="#[payload.name]" doc:name="Record Variable"/>
+                <append-string-transformer message="#[payload.name]" doc:name="Append String"/>
+            </batch:step>
+        </batch:process-records>
+        <batch:on-complete>
+            <logger message="On Completion, writing to File:: " level="INFO" doc:name="Logger"/>
+            <file:outbound-endpoint path="C:\Users\sanja\Desktop" connector-ref="File" responseTimeout="10000" doc:name="File"/>
+        </batch:on-complete>
+    </batch:job>
+</mule>
