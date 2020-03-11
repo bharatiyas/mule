@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="e93c7a6e-8a85-42fd-ba4a-06ffb8b0643c" >
+		<db:my-sql-connection host="mudb.learn.mulesoft.com" port="3306" user="mule" password="mule" database="training" />
+	</db:config>
+	<flow name="getAccountFromDBFlow" doc:id="8842de67-f650-42af-a063-65043d7e161d" >
+		<db:select doc:name="SelectAccount" doc:id="be8c2fcf-cd9f-4218-b03a-ee3da5245bb1" config-ref="Database_Config">
+			<db:sql >SELECT *
+FROM flights_customers
+WHERE accountType = :accountType</db:sql>
+			<db:input-parameters ><![CDATA[#[{'accountType' : attributes.queryParams.accountType}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:name="DBResponse_to_APIResponse">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+import * from dw::core::Strings
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	firstName: substringBefore(payload01.name, " "),
+	lastName: substringAfter(payload01.name, " "),
+	country: payload01.country default "",
+	address: ((payload01.street default "") ++ (payload01.city default "")) ++ (payload01.state default ""),
+	accountType: payload01.accountType default "",
+	id: payload01.accountID default "",
+	postal: payload01.postal default "",
+	creationDate: payload01.creationDate as String default "",
+	miles: payload01.miles default 0
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+	</flow>
+	<flow name="getAccountFromDBFlowById" doc:id="6ba90627-d2e2-4d9e-a1e4-7bb7c78c3c13" >
+		<db:select doc:name="SelectAccountById" doc:id="f903d8a9-c823-4805-bfcb-4db529be4754" config-ref="Database_Config" >
+			<db:sql >SELECT *
+FROM flights_customers
+WHERE accountID = :accountID</db:sql>
+			<db:input-parameters ><![CDATA[#[{'accountID' : attributes.uriParams.id}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="DBResponse_to_APIResponse" doc:id="e8bd6c02-45c8-4ac0-9487-faa22286e5bd" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+import * from dw::core::Strings
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	firstName: substringBefore(payload01.name, " "),
+	lastName: substringAfter(payload01.name, " "),
+	country: payload01.country default "",
+	address: ((payload01.street default "") ++ (payload01.city default "")) ++ (payload01.state default ""),
+	accountType: payload01.accountType default "",
+	id: payload01.accountID default "",
+	postal: payload01.postal default "",
+	creationDate: payload01.creationDate as String default "",
+	miles: payload01.miles default 0
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
